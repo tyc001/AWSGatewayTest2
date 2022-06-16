@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -54,7 +55,6 @@ public class LogManagedBean implements Serializable{
             uniqueApis.add(l.getApi());
         }
         apis = new ArrayList<String>(uniqueApis);
-        apis.add("Test1");
         this.eventTypeFilters = new ArrayList<>();
         this.eventTypeFilters.add("Access");
         this.eventTypeFilters.add("Execution");
@@ -68,7 +68,7 @@ public class LogManagedBean implements Serializable{
     public void doApplyApiFilter(String apiFilter) {
         List<Log> newFilteredLogs = new ArrayList<>();
         for (Log l : allLogs) {
-            if (l.getApi().equals(apiFilter) && (eventTypeFilters.isEmpty() || eventTypeFilters.contains(l.getEventType()))) {
+            if (l.getApi().equals(apiFilter) && (eventTypeFilters.contains(l.getEventType()))) {
                 newFilteredLogs.add(l);
             }
         }
@@ -77,6 +77,11 @@ public class LogManagedBean implements Serializable{
     
     public void removeAllApiFilters() {
         filteredLogs = new ArrayList<>(allLogs);
+        apiFilter = null;
+        eventTypeFilters = new ArrayList<>();
+        eventTypeFilters.add("Access");
+        eventTypeFilters.add("Execution");
+        eventTypeFilters.add("Lambda");
     }
     
     public void applyEventTypeFilters() {

@@ -20,8 +20,8 @@
                     <h3>Main Menu</h3>
                     <nav>
                         <h:form id="mainForm">
-                            <p:commandLink update="formAllLogs:allLogsDataTable" action="#{logManagedBean.removeAllApiFilters}">
-                                <p:outputLabel value="All Logs" />
+                            <p:commandLink update="formAllLogs:allLogsDataTable eventTypeFiltersManyCheckbox" action="#{logManagedBean.removeAllApiFilters}">
+                                <p:outputLabel value="All Logs"/>
                             </p:commandLink>
                             <br/>
                         
@@ -35,7 +35,7 @@
                             </p:dataTable>
                             <br/>
                             
-                            <p:selectManyCheckbox value="#{logManagedBean.eventTypeFilters}" >
+                            <p:selectManyCheckbox id="eventTypeFiltersManyCheckbox" value="#{logManagedBean.eventTypeFilters}" >
                                 <p:ajax listener="#{logManagedBean.applyEventTypeFilters}" update="formAllLogs:allLogsDataTable" />
                                 <f:selectItem itemLabel="Access" itemValue="Access" />
                                 <f:selectItem itemLabel="Execution" itemValue="Execution" />
@@ -47,8 +47,9 @@
             </p:layoutUnit>
             <p:layoutUnit position="center">
                 <h:form id="formAllLogs">
-                    <p:dataTable id="allLogsDataTable" value="#{logManagedBean.filteredLogs}" var="log" rowKey="#{log.logId}">
-                        <p:column headerText="Extended Request Id" sortBy="#{log.extendedRequestId}" filterBy="#{log.extendedRequestId}" filterMatchMode="contains">
+                    <p:dataTable id="allLogsDataTable" widgetVar="allLogsDataTable" value="#{logManagedBean.filteredLogs}" var="log" rowKey="#{log.logId}"
+                                 rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+                        <p:column headerText="Extended Request Id" sortBy="#{log.extendedRequestId}">
                             <h:outputText value="#{log.extendedRequestId}" />
                         </p:column>
                         <p:column headerText="API" sortBy="#{log.api}" filterBy="#{log.logId}" filterMatchMode="contains">
@@ -61,7 +62,9 @@
                             <h:outputText value="#{log.eventType}" />
                         </p:column>
                         <p:column headerText="Date-Time" sortBy="#{log.dateTime}" filterBy="#{log.dateTime}" filterMatchMode="contains">
-                            <h:outputText value="#{log.dateTime}" />
+                            <h:outputText value="#{log.dateTime}">
+                                <f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss"/>
+                            </h:outputText>
                         </p:column>
                         <p:column headerText="Message" sortBy="#{log.message}" filterBy="#{log.message}" filterMatchMode="contains">
                             <div>
@@ -77,16 +80,23 @@
                     </p:dataTable>
                 </h:form>
             </p:layoutUnit>
-            <p:layoutUnit position="east" minSize="200">
+     <!--       <p:layoutUnit position="east" minSize="200">
                 <h4>East</h4>
-            </p:layoutUnit>
+            </p:layoutUnit> -->
             <p:layoutUnit position="south" size="70">
                 <h4>South</h4>
             </p:layoutUnit>
         </p:layout>
         <h:form id="formViewFullLogMessage">
-            <p:dialog id="dialogViewFullLogMessage" widgetVar="dialogViewFullLogMessage" header="Full Log Message" closable="true">
-                <p:panelGrid responsive="true" >
+            <p:dialog id="dialogViewFullLogMessage" widgetVar="dialogViewFullLogMessage" header="Full Log Message" closable="true" width="1150px" height="600px" >
+                <p:dataTable id="fullMessageDataTable" value="#{logManagedBean.selectedMessageToView}" var="fullMessage" resizableColumns="true" liveResize="true" tableStyle="table-layout: auto;">
+                    <p:column >
+                        <pre>
+                            <p:outputLabel value="#{fullMessage}" />
+                        </pre>
+                    </p:column>
+                </p:dataTable>
+ <!--               <p:panelGrid>
                     <p:row>
                         <p:column>
                             <pre>
@@ -94,7 +104,8 @@
                             </pre>
                         </p:column>
                     </p:row>
-                </p:panelGrid>
+                </p:panelGrid> -->
+                
             </p:dialog>
         </h:form>
     </h:body>

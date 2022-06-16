@@ -219,8 +219,9 @@ public class Log implements Serializable {
             this.api = message.substring(startIndex, endIndex).split("\\.")[0];
         } else if (message.contains("API Key:  API Stage: ")) {
             int startIndex = message.indexOf("API Key:  API Stage: ") + "API Key:  API Stage: ".length();
-            int endIndex = message.indexOf("(", startIndex);
-            this.api = message.substring(startIndex, endIndex).split("/")[0];
+            int endIndex = message.indexOf("/", startIndex);
+            System.out.println("End index:" + endIndex);
+            this.api = message.substring(startIndex, endIndex);
         } else if (message.contains("Host=")) {
             int startIndex = message.indexOf("Host=") + "Host=".length();
             int endIndex = message.indexOf(",", startIndex);
