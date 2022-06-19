@@ -39,9 +39,12 @@ public class LogManagedBean implements Serializable{
     private String selectedMessageToView;
     
     private String apiFilter;
+    private String filterString;
     private List<Log> filteredLogs;
+    private List<Log> filteredLogs2;
 
     private List<String> eventTypeFilters;
+    private static int methodCallCount;
     public LogManagedBean() {
     }
     
@@ -50,6 +53,7 @@ public class LogManagedBean implements Serializable{
         System.out.println("Log Managed Bean Post Construct");
         this.allLogs = logSessionBeanLocal.retrieveAllLogs();
         this.filteredLogs = new ArrayList<>(allLogs);
+        this.filteredLogs2 = new ArrayList<>();
         Set<String> uniqueApis = new HashSet<>();
         for (Log l : this.allLogs) {
             uniqueApis.add(l.getApi());
@@ -59,6 +63,7 @@ public class LogManagedBean implements Serializable{
         this.eventTypeFilters.add("Access");
         this.eventTypeFilters.add("Execution");
         this.eventTypeFilters.add("Lambda");
+        methodCallCount = 0;
     }
     
     public void applyApiFilter() {
@@ -66,6 +71,7 @@ public class LogManagedBean implements Serializable{
     }
     
     public void doApplyApiFilter(String apiFilter) {
+        System.out.println("APPLY API FILTER START");
         List<Log> newFilteredLogs = new ArrayList<>();
         for (Log l : allLogs) {
             if (l.getApi().equals(apiFilter) && (eventTypeFilters.contains(l.getEventType()))) {
@@ -73,6 +79,8 @@ public class LogManagedBean implements Serializable{
             }
         }
         filteredLogs = newFilteredLogs;
+//        filteredLogs2.add(filteredLogs.get(0));
+        System.out.println("APPLY API FILTER END");
     }
     
     public void removeAllApiFilters() {
@@ -85,6 +93,7 @@ public class LogManagedBean implements Serializable{
     }
     
     public void applyEventTypeFilters() {
+        System.out.println("APPLY EVENT TYPE FILTERS START");
         List<Log> newFilteredLogs = new ArrayList<>();
         for (Log l : allLogs) {
             if (eventTypeFilters.contains(l.getEventType()) && (apiFilter == null || l.getApi().equals(apiFilter))) {
@@ -92,6 +101,23 @@ public class LogManagedBean implements Serializable{
             }
         }
         filteredLogs = newFilteredLogs;
+        System.out.println("APPLY EVENT TYPE FILTERS END");
+    }
+    
+    public boolean filterExtendedRequestId(Object value, Object filter, Locale locale) {
+        System.out.println("FILTER EXTENDED REQUEST ID START");
+        String filterText = filter == null? null : filter.toString().trim();
+        if (filterText == null || filterText.equals("")) {
+            return true;
+        }
+        String currentExtendedRequestId = value.toString();
+        List<Log> filteredLogList = new ArrayList<>();
+        System.out.println("FILTER EXTENDED REQUEST ID END" + ++methodCallCount);
+        
+        if (currentExtendedRequestId.contains(filterText)) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -218,5 +244,33 @@ public class LogManagedBean implements Serializable{
      */
     public void setFilteredLogs(List<Log> filteredLogs) {
         this.filteredLogs = filteredLogs;
+    }
+
+    /**
+     * @return the filterString
+     */
+    public String getFilterString() {
+        return filterString;
+    }
+
+    /**
+     * @param filterString the filterString to set
+     */
+    public void setFilterString(String filterString) {
+        this.filterString = filterString;
+    }
+
+    /**
+     * @return the filteredLogs2
+     */
+    public List<Log> getFilteredLogs2() {
+        return filteredLogs2;
+    }
+
+    /**
+     * @param filteredLogs2 the filteredLogs2 to set
+     */
+    public void setFilteredLogs2(List<Log> filteredLogs2) {
+        this.filteredLogs2 = filteredLogs2;
     }
 }

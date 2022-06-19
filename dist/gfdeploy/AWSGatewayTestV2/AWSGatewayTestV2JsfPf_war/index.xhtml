@@ -49,10 +49,13 @@
                 <h:form id="formAllLogs">
                     <p:dataTable id="allLogsDataTable" widgetVar="allLogsDataTable" value="#{logManagedBean.filteredLogs}" var="log" rowKey="#{log.logId}"
                                  rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
-                        <p:column headerText="Extended Request Id" sortBy="#{log.extendedRequestId}">
+                        <p:column headerText="Extended Request Id" sortBy="#{log.extendedRequestId}" filterBy="#{log.extendedRequestId}" filterFunction="#{logManagedBean.filterExtendedRequestId}">
+      <!--                      <f:facet name="filter">
+                                <p:inputText onkeyup="PF('allLogsDataTable').filter()" placeholder="Enter something" onblur="PF('allLogsDataTable').update()"/>
+                            </f:facet> -->
                             <h:outputText value="#{log.extendedRequestId}" />
                         </p:column>
-                        <p:column headerText="API" sortBy="#{log.api}" filterBy="#{log.logId}" filterMatchMode="contains">
+                        <p:column headerText="API" sortBy="#{log.api}" filterBy="#{log.api}" filterMatchMode="contains">
                             <h:outputText value="#{log.api}" />
                         </p:column>
                         <p:column headerText="Message Type" sortBy="#{log.messageType}" filterBy="#{log.messageType}" filterMatchMode="contains">
