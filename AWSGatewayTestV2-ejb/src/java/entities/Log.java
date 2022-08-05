@@ -134,13 +134,13 @@ public class Log implements Serializable {
      */
     public void setLogGroup(String logGroup) {
         this.logGroup = logGroup;
-        if (logGroup.contains("lambda")) {
+/*        if (logGroup.contains("lambda")) {
             this.eventType = "Lambda";
         } else if (logGroup.contains("Execution")) {
             this.eventType = "Execution";
         } else {
             this.eventType = "Access";
-        }
+        } */
     }
 
     /**
@@ -213,7 +213,7 @@ public class Log implements Serializable {
     public void setMessage(String message) {
         this.message = message;
 
-        if (message.contains("Host: ")) {
+/*        if (message.contains("Host: ")) {
             int startIndex = message.indexOf("Host: ") + "Host: ".length() + 1;
             int endIndex = message.indexOf(",", startIndex) - 1;
             this.api = message.substring(startIndex, endIndex).split("\\.")[0];
@@ -240,7 +240,7 @@ public class Log implements Serializable {
             int startIndex = message.indexOf("Extended Request Id: ") + "Extended Request Id: ".length();
             int endIndex = message.indexOf("=") + 1;
             this.extendedRequestId = message.substring(startIndex, endIndex);            
-        }
+        } */
     }
 
     /**

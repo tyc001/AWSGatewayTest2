@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>API: #{viewSingleAPILogsManagedBean.apiToView}</title>
+        <h:outputStylesheet name="primeicons/primeicons.css" library="primefaces" />
+        <h:outputStylesheet library="css" name="default.css" />
+    </h:head>
+    <h:body>
+        <p:layout fullPage="true">
+            <p:layoutUnit position="north" size="120">
+                <h1>API: #{viewSingleAPILogsManagedBean.apiToView}</h1>
+            </p:layoutUnit>
+            <p:layoutUnit position="west" size="240">
+                <section id="mainMenu" style="width:200px;">
+                    <nav>
+                        <h:form id="mainForm">
+                            <p:commandLink value = "All Logs" actionListener="#{viewSingleAPILogsManagedBean.returnToIndex}"/>
+                            <!--                           <p:commandLink update="formAllLogs:allLogsDataTable eventTypeFiltersManyCheckbox" action="">
+                                                           <p:outputLabel value="All Logs"/>
+                                                       </p:commandLink> -->
+                            <br/>
+
+                            <p:dataTable id="apiDataTable" value="#{viewSingleAPILogsManagedBean.apis}" var="api">
+                                <p:column headerText="APIs">
+                                    <p:commandLink actionListener="#{viewSingleAPILogsManagedBean.viewAPILogs}" value="#{api}">
+                                        <f:attribute name="api" value="#{api}" />
+                                    </p:commandLink>
+                                </p:column>
+                            </p:dataTable>
+                            <br/>
+
+                            <!--                            <p:selectManyCheckbox id="eventTypeFiltersManyCheckbox" value="" >
+                                                            <p:ajax listener="" update="formAllLogs:allLogsDataTable" />
+                                                            <f:selectItem itemLabel="Access" itemValue="Access" />
+                                                            <f:selectItem itemLabel="Execution" itemValue="Execution" />
+                                                            <f:selectItem itemLabel="Lambda" itemValue="Lambda" />
+                                                        </p:selectManyCheckbox> -->
+                        </h:form>
+                    </nav>
+                </section>
+            </p:layoutUnit>
+            <p:layoutUnit position="center">
+                <h:form id="formAllLogs">
+                    <p:dataTable id="allLogsDataTable" widgetVar="allLogsDataTable" value="#{viewSingleAPILogsManagedBean.logsToView}" var="log" rowKey="#{log.logId}" filteredValue="#{viewSingleAPILogsManagedBean.filteredLogs}"
+                                 rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+                        <f:facet name="header">
+                            <p:outputPanel style="text-align:right;">
+                                <h:outputText value="Search All Fields: "/>
+                                <p:inputText id="globalFilter" onkeyup="PF('allLogsDataTable').filter()" placeholder="Enter search terms"/>
+                            </p:outputPanel>
+                        </f:facet>
+                        <p:column headerText="Extended Request Id" sortBy="#{log.extendedRequestId}" filterBy="#{log.extendedRequestId}">
+                            <!--                      <f:facet name="filter">
+                                                      <p:inputText onkeyup="PF('allLogsDataTable').filter()" placeholder="Enter something" onblur="PF('allLogsDataTable').update()"/>
+                                                  </f:facet> -->
+                            <h:outputText value="#{log.extendedRequestId}" />
+                        </p:column>
+                        <p:column headerText="Message Type" sortBy="#{log.messageType}" filterBy="#{log.messageType}" filterMatchMode="contains">
+                            <h:outputText value="#{log.messageType}" />
+                        </p:column>
+                        <p:column headerText="Event Type" sortBy="#{log.eventType}" filterBy="#{log.eventType}" filterFunction="#{viewSingleAPILogsManagedBean.filterByEventType}" >
+                            <f:facet name="filter">
+                                <p:selectManyButton onchange="PF('allLogsDataTable').filter()" styleClass="custom-filter" value="#{viewSingleAPILogsManagedBean.eventTypeFilters}">
+                                    <f:selectItem itemLabel="Access" itemValue="Access"/>
+                                    <f:selectItem itemLabel="Execution" itemValue="Execution"/>
+                                    <f:selectItem itemLabel="Lambda" itemValue="Lambda"/>
+                                </p:selectManyButton>
+                            </f:facet>
+                            <h:outputText value="#{log.eventType}" />
+                        </p:column>
+                        <p:column headerText="Date-Time" sortBy="#{log.dateTime}" filterBy="#{log.dateTime}" filterMatchMode="contains">
+                            <h:outputText value="#{log.dateTime}">
+                                <f:convertDateTime pattern="dd-MM-yyyy HH:mm:ss"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="Message" sortBy="#{log.message}" filterBy="#{log.message}" filterMatchMode="contains">
+                            <div>
+                                <h:outputText value="#{log.message.substring(0,20).concat('...')}" rendered="#{log.message.length() gt 20}"/>
+                                <h:outputText value="#{log.message}" rendered="#{log.message.length() le 20}" />
+                            </div>
+                            <div>
+                                <p:commandButton update="formViewFullLogMessage" oncomplete="PF('dialogViewFullLogMessage').show()" icon="ui-icon-document" title="Full Message">
+                                    <f:setPropertyActionListener value="#{log.message}" target="#{viewSingleAPILogsManagedBean.fullMessage}"/>
+                                </p:commandButton>
+                            </div>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+            </p:layoutUnit>
+            <!--       <p:layoutUnit position="east" minSize="200">
+                       <h4>East</h4>
+                   </p:layoutUnit> -->
+            <p:layoutUnit position="south" size="70">
+                <h4>South</h4>
+            </p:layoutUnit>
+        </p:layout>
+        <h:form id="formViewFullLogMessage">
+            <p:dialog id="dialogViewFullLogMessage" widgetVar="dialogViewFullLogMessage" header="Full Log Message" closable="true" width="1150px" height="600px" >
+                <p:dataTable id="fullMessageDataTable" value="#{viewSingleAPILogsManagedBean.fullMessage}" var="fullMessage" resizableColumns="true" liveResize="true" tableStyle="table-layout: auto;">
+                    <p:column >
+                        <pre>
+                            <p:outputLabel value="#{fullMessage}" />
+                        </pre>
+                    </p:column>
+                </p:dataTable>
+                <!--               <p:panelGrid>
+                                   <p:row>
+                                       <p:column>
+                                           <pre>
+                                               <p:outputLabel value="" />
+                                           </pre>
+                                       </p:column>
+                                   </p:row>
+                               </p:panelGrid> -->
+
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>
+

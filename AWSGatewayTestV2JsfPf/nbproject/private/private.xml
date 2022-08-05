@@ -4,8 +4,9 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/thamy/OneDrive/Documents/NetBeansProjects/AWSGatewayTestV2/AWSGatewayTestV2JsfPf/web/index.xhtml</file>
+            <file>file:/C:/Users/thamy/OneDrive/Documents/NetBeansProjects/AWSGatewayTestV2/AWSGatewayTestV2JsfPf/web/viewSingleAPILogs.xhtml</file>
             <file>file:/C:/Users/thamy/OneDrive/Documents/NetBeansProjects/AWSGatewayTestV2/AWSGatewayTestV2JsfPf/src/java/managedBeans/LogManagedBean.java</file>
-            <file>file:/C:/Users/thamy/OneDrive/Documents/NetBeansProjects/AWSGatewayTestV2/AWSGatewayTestV2JsfPf/web/resources/css/default.css</file>
+            <file>file:/C:/Users/thamy/OneDrive/Documents/NetBeansProjects/AWSGatewayTestV2/AWSGatewayTestV2JsfPf/src/java/managedBeans/ViewSingleAPILogsManagedBean.java</file>
         </group>
     </open-files>
 </project-private>

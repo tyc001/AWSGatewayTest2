@@ -11,45 +11,51 @@
         <h:outputStylesheet library="css" name="default.css" />
     </h:head>
     <h:body>
+        <f:metadata>
+            <f:viewParam name="user" value="#{logManagedBean.user}"/>
+            <f:viewParam name="token" value="#{logManagedBean.token}"/>
+        </f:metadata> 
         <p:layout fullPage="true">
             <p:layoutUnit position="north" size="120">
                 <h1>Logs</h1>
             </p:layoutUnit>
             <p:layoutUnit position="west" size="240">
                 <section id="mainMenu" style="width:200px;">
-                    <h3>Main Menu</h3>
                     <nav>
                         <h:form id="mainForm">
-                            <p:commandLink update="formAllLogs:allLogsDataTable eventTypeFiltersManyCheckbox" action="#{logManagedBean.removeAllApiFilters}">
-                                <p:outputLabel value="All Logs"/>
-                            </p:commandLink>
+                            <p:commandLink value = "All Logs" actionListener="#{logManagedBean.refresh}"/>
                             <br/>
                         
                             <p:dataTable id="apiDataTable" value="#{logManagedBean.apis}" var="api">
                                 <p:column headerText="APIs">
-                                    <p:commandLink update="formAllLogs:allLogsDataTable" action="#{logManagedBean.applyApiFilter}">
-                                        <p:outputLabel value="#{api}"/>
-                                        <f:setPropertyActionListener value="#{api}" target="#{logManagedBean.apiFilter}" />
+                                    <p:commandLink value="#{api}" actionListener="#{logManagedBean.viewAPILogs}">
+                                        <f:attribute name="api" value="#{api}"/>
                                     </p:commandLink>
                                 </p:column>
                             </p:dataTable>
                             <br/>
                             
-                            <p:selectManyCheckbox id="eventTypeFiltersManyCheckbox" value="#{logManagedBean.eventTypeFilters}" >
-                                <p:ajax listener="#{logManagedBean.applyEventTypeFilters}" update="formAllLogs:allLogsDataTable" />
+<!--                            <p:selectManyCheckbox id="eventTypeFiltersManyCheckbox" value="" >
+                                <p:ajax listener="" update="formAllLogs:allLogsDataTable" />
                                 <f:selectItem itemLabel="Access" itemValue="Access" />
                                 <f:selectItem itemLabel="Execution" itemValue="Execution" />
                                 <f:selectItem itemLabel="Lambda" itemValue="Lambda" />
-                            </p:selectManyCheckbox>
+                            </p:selectManyCheckbox> -->
                         </h:form>
                     </nav>
                 </section>
             </p:layoutUnit>
             <p:layoutUnit position="center">
                 <h:form id="formAllLogs">
-                    <p:dataTable id="allLogsDataTable" widgetVar="allLogsDataTable" value="#{logManagedBean.filteredLogs}" var="log" rowKey="#{log.logId}"
+                    <p:dataTable id="allLogsDataTable" widgetVar="allLogsDataTable" value="#{logManagedBean.allLogs}" var="log" rowKey="#{log.logId}" filteredValue="#{logManagedBean.filteredLogs}"
                                  rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
-                        <p:column headerText="Extended Request Id" sortBy="#{log.extendedRequestId}" filterBy="#{log.extendedRequestId}" filterFunction="#{logManagedBean.filterExtendedRequestId}">
+                        <f:facet name="header">
+                            <p:outputPanel style="text-align:right;">
+                                <h:outputText value="Search All Fields: "/>
+                                <p:inputText id="globalFilter" onkeyup="PF('allLogsDataTable').filter()" placeholder="Enter search terms" style="text-align:right;"/>
+                            </p:outputPanel>
+                        </f:facet>
+                        <p:column headerText="Extended Request Id" sortBy="#{log.extendedRequestId}" filterBy="#{log.extendedRequestId}">
       <!--                      <f:facet name="filter">
                                 <p:inputText onkeyup="PF('allLogsDataTable').filter()" placeholder="Enter something" onblur="PF('allLogsDataTable').update()"/>
                             </f:facet> -->
@@ -61,7 +67,14 @@
                         <p:column headerText="Message Type" sortBy="#{log.messageType}" filterBy="#{log.messageType}" filterMatchMode="contains">
                             <h:outputText value="#{log.messageType}" />
                         </p:column>
-                        <p:column headerText="Event Type" sortBy="#{log.eventType}" filterBy="#{log.eventType}" filterMatchMode="contains">
+                        <p:column headerText="Event Type" sortBy="#{log.eventType}" filterBy="#{log.eventType}" filterFunction="#{logManagedBean.filterByEventType}" >
+                            <f:facet name="filter">
+                                <p:selectManyButton onchange="PF('allLogsDataTable').filter()" styleClass="custom-filter" value="#{logManagedBean.eventTypeFilters}">
+                                    <f:selectItem itemLabel="Access" itemValue="Access"/>
+                                    <f:selectItem itemLabel="Execution" itemValue="Execution"/>
+                                    <f:selectItem itemLabel="Lambda" itemValue="Lambda"/>
+                                </p:selectManyButton>
+                            </f:facet>
                             <h:outputText value="#{log.eventType}" />
                         </p:column>
                         <p:column headerText="Date-Time" sortBy="#{log.dateTime}" filterBy="#{log.dateTime}" filterMatchMode="contains">
